@@ -19,7 +19,7 @@
             color: #2a3a2a;
         }
         .perfil-item .value {
-            color: #4a5a4a;
+            color: #4a5a5a;
         }
         .nav-bottom {
             display: flex;
@@ -47,11 +47,39 @@
             font-size: 22px;
             display: block;
         }
-        .whatsapp-row {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            margin: 16px 0;
+        .btn-whatsapp-link {
+            display: block;
+            text-align: center;
+            text-decoration: none;
+            padding: 14px;
+            background: #25D366;
+            color: white;
+            border-radius: 14px;
+            font-weight: 600;
+            font-size: 17px;
+            margin-bottom: 10px;
+            transition: background 0.2s;
+            border: none;
+        }
+        .btn-whatsapp-link:hover {
+            background: #1ebe5c;
+        }
+        .btn-secondary-link {
+            display: block;
+            text-align: center;
+            text-decoration: none;
+            padding: 14px;
+            background: #e8f5e9;
+            color: #1B5E20;
+            border: 1.5px solid #1B5E20;
+            border-radius: 14px;
+            font-weight: 600;
+            font-size: 17px;
+            margin-bottom: 10px;
+            transition: background 0.2s;
+        }
+        .btn-secondary-link:hover {
+            background: #c8e6c9;
         }
     </style>
 </head>
@@ -69,9 +97,9 @@
         <div class="perfil-item"><span class="label">IMC</span><span class="value" id="perfilIMC">--</span></div>
 
         <div style="margin:20px 0;">
-            <button class="btn-secondary" onclick="solicitarLibro()">📖 Solicitar el libro</button>
-            <button class="btn-secondary" onclick="solicitarCitaOnline()">📅 Cita online</button>
-            <button class="btn-secondary" onclick="solicitarVisita()">🏠 Visita domiciliaria</button>
+            <a href="https://wa.me/584129504867?text=Hola%20Dr.%20Neptal%C3%AD%2C%20quiero%20adquirir%20el%20libro%20%22El%20C%C3%B3digo%20de%20la%20Insulina%22." target="_blank" class="btn-secondary-link">📖 Solicitar el libro</a>
+            <a href="https://wa.me/584129504867?text=Hola%20Dr.%20Neptal%C3%AD%2C%20quiero%20agendar%20una%20cita%20online." target="_blank" class="btn-secondary-link">📅 Cita online</a>
+            <a href="https://wa.me/584129504867?text=Hola%20Dr.%20Neptal%C3%AD%2C%20quiero%20solicitar%20una%20visita%20domiciliaria." target="_blank" class="btn-secondary-link">🏠 Visita domiciliaria</a>
         </div>
 
         <button class="btn-primary" onclick="cerrarSesion()" style="background:#c62828;">Cerrar sesión</button>
@@ -96,7 +124,6 @@
         document.getElementById('perfilSexo').textContent = user.sexo || '--';
         document.getElementById('perfilEstatura').textContent = user.estatura ? user.estatura + ' cm' : '--';
 
-        // IMC
         const peso = parseFloat(localStorage.getItem('peso_actual')) || 70;
         const estatura = user.estatura || 170;
         const imc = (peso / ((estatura/100) ** 2)).toFixed(1);
