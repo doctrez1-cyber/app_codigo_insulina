@@ -1,12 +1,14 @@
-// ============================================
-// EL CÓDIGO DE LA INSULINA - APP.JS
-// VERSIÓN COMPLETA CON WHATSAPP + INSTALACIÓN
-// ============================================
+// ============================================================
+// EL CÓDIGO DE LA INSULINA - APP.JS (VERSIÓN UNIFICADA)
+// Incluye: gestión usuarios, guardado de datos, WhatsApp,
+// instalación PWA, PDF, actualización automática.
+// ============================================================
 
-// ===== CONFIGURACIÓN =====
+// ========== CONFIGURACIÓN ==========
 const NUMERO_DR = '584129504867';
+const CACHE_VERSION = 'codigo-insulina-v1'; // Cambiar al actualizar
 
-// ===== REFERENCIAS DOM =====
+// ========== REFERENCIAS DOM ==========
 const loginForm = document.getElementById('loginForm');
 const registerForm = document.getElementById('registerForm');
 const goToRegister = document.getElementById('goToRegister');
@@ -16,11 +18,8 @@ const registerBtn = document.getElementById('registerBtn');
 const loginError = document.getElementById('loginError');
 const registerError = document.getElementById('registerError');
 
-// Campos Login
 const loginEmail = document.getElementById('loginEmail');
 const loginPassword = document.getElementById('loginPassword');
-
-// Campos Registro
 const regNombre = document.getElementById('regNombre');
 const regEdad = document.getElementById('regEdad');
 const regSexo = document.getElementById('regSexo');
@@ -28,14 +27,14 @@ const regEstatura = document.getElementById('regEstatura');
 const regEmail = document.getElementById('regEmail');
 const regPassword = document.getElementById('regPassword');
 
-// ============================================
+// ============================================================
 // 1. GESTIÓN DE USUARIOS (localStorage)
-// ============================================
+// ============================================================
 
 function getUsers() {
     try {
         return JSON.parse(localStorage.getItem('usuarios')) || [];
-    } catch (e) {
+    } catch {
         return [];
     }
 }
@@ -47,7 +46,7 @@ function saveUsers(users) {
 function getCurrentUser() {
     try {
         return JSON.parse(sessionStorage.getItem('usuarioActual')) || null;
-    } catch (e) {
+    } catch {
         return null;
     }
 }
@@ -60,11 +59,11 @@ function clearCurrentUser() {
     sessionStorage.removeItem('usuarioActual');
 }
 
-// ============================================
-// 2. REGISTRO DE USUARIO
-// ============================================
+// ============================================================
+// 2. REGISTRO
+// ============================================================
 
-registerBtn.addEventListener('click', function (e) {
+registerBtn.addEventListener('click', function(e) {
     e.preventDefault();
 
     const nombre = regNombre.value.trim();
@@ -105,11 +104,11 @@ registerBtn.addEventListener('click', function (e) {
     window.location.href = 'dashboard.html';
 });
 
-// ============================================
-// 3. INICIO DE SESIÓN
-// ============================================
+// ============================================================
+// 3. LOGIN
+// ============================================================
 
-loginBtn.addEventListener('click', function (e) {
+loginBtn.addEventListener('click', function(e) {
     e.preventDefault();
 
     const email = loginEmail.value.trim();
@@ -130,36 +129,32 @@ loginBtn.addEventListener('click', function (e) {
     window.location.href = 'dashboard.html';
 });
 
-// ============================================
+// ============================================================
 // 4. NAVEGACIÓN ENTRE LOGIN Y REGISTRO
-// ============================================
+// ============================================================
 
-goToRegister.addEventListener('click', function () {
+goToRegister.addEventListener('click', function() {
     loginForm.style.display = 'none';
     registerForm.style.display = 'block';
     loginError.textContent = '';
     registerError.textContent = '';
 });
 
-goToLogin.addEventListener('click', function () {
+goToLogin.addEventListener('click', function() {
     registerForm.style.display = 'none';
     loginForm.style.display = 'block';
     loginError.textContent = '';
     registerError.textContent = '';
 });
 
-// ============================================
-// 5. UTILIDADES
-// ============================================
-
 function mostrarError(elemento, mensaje) {
     elemento.textContent = mensaje;
     setTimeout(() => { elemento.textContent = ''; }, 4000);
 }
 
-// ============================================
-// 6. FUNCIONES PARA GUARDAR DATOS
-// ============================================
+// ============================================================
+// 5. GUARDADO DE DATOS
+// ============================================================
 
 function guardarTestSintomas(resultados) {
     const user = getCurrentUser();
@@ -245,9 +240,9 @@ function cerrarSesion() {
     window.location.href = 'index.html';
 }
 
-// ============================================
-// 7. FUNCIONES PARA WHATSAPP (CORREGIDAS)
-// ============================================
+// ============================================================
+// 6. WHATSAPP (con fallback para navegadores móviles)
+// ============================================================
 
 function enviarWhatsApp(mensaje) {
     const texto = encodeURIComponent(mensaje);
@@ -257,7 +252,7 @@ function enviarWhatsApp(mensaje) {
         if (!win || win.closed || typeof win.closed === 'undefined') {
             window.location.href = url;
         }
-    } catch (e) {
+    } catch {
         window.location.href = url;
     }
 }
@@ -279,9 +274,9 @@ function solicitarVisita() {
     enviarWhatsApp('Hola Dr. Neptalí, quiero solicitar una visita domiciliaria.');
 }
 
-// ============================================
-// 8. INSTALACIÓN DE LA APP (PWA)
-// ============================================
+// ============================================================
+// 7. INSTALACIÓN PWA (Android + iOS)
+// ============================================================
 
 let deferredPrompt;
 
@@ -301,7 +296,7 @@ function instalarApp() {
                 const androidBtn = document.getElementById('instalacionAndroid');
                 if (androidBtn) androidBtn.style.display = 'none';
             } else {
-                console.log('El usuario rechazó la instalación');
+                console.log('Usuario rechazó la instalación');
             }
             deferredPrompt = null;
         });
@@ -337,14 +332,36 @@ window.addEventListener('load', function() {
 
 window.instalarApp = instalarApp;
 
-// ============================================
-// 9. FUNCIONES PARA PDF (con jspdf)
-// ============================================
+// ============================================================
+// 8. ACTUALIZACIÓN AUTOMÁTICA (Service Worker)
+// ============================================================
+
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('service-worker.js')
+        .then(registration => {
+            registration.addEventListener('updatefound', () => {
+                const newWorker = registration.installing;
+                newWorker.addEventListener('statechange', () => {
+                    if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                        // Hay una nueva versión disponible
+                        if (confirm('¡Hay una nueva versión de la app disponible! ¿Quieres recargar para actualizarla?')) {
+                            window.location.reload();
+                        }
+                    }
+                });
+            });
+        })
+        .catch(() => {
+            console.log('Service Worker no disponible (modo offline no activo).');
+        });
+}
+
+// ============================================================
+// 9. GENERACIÓN DE PDF (con jspdf)
+// ============================================================
 
 function generarPDF(resultados, tipo, nombreUsuario) {
-    // Asegurarse de que la librería esté cargada
     if (typeof window.jspdf === 'undefined') {
-        // Cargar dinámicamente si no está disponible
         const script = document.createElement('script');
         script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
         script.onload = function() {
@@ -361,17 +378,15 @@ function generarPDFInterno(resultados, tipo, nombreUsuario) {
     const doc = new jsPDF('p', 'mm', 'a4');
     const logo = document.getElementById('logoImg') ? document.getElementById('logoImg').src : '';
 
-    // Título
     doc.setFontSize(20);
     doc.setTextColor(27, 94, 32);
     doc.text('El Código de la Insulina', 105, 20, { align: 'center' });
 
-    // Logo (si está disponible)
     if (logo) {
         try {
             doc.addImage(logo, 'PNG', 80, 28, 50, 50);
-        } catch (e) {
-            // Si falla la imagen, solo texto
+        } catch {
+            // Si falla, solo texto
         }
     }
 
@@ -381,7 +396,6 @@ function generarPDFInterno(resultados, tipo, nombreUsuario) {
     doc.text(`Usuario: ${nombreUsuario || 'No especificado'}`, 20, 110);
     doc.text(`Fecha: ${new Date().toLocaleDateString()}`, 20, 120);
 
-    // Línea separadora
     doc.line(20, 130, 190, 130);
 
     doc.setFontSize(12);
@@ -393,7 +407,6 @@ function generarPDFInterno(resultados, tipo, nombreUsuario) {
         y += 8;
     });
 
-    // Pie de página
     doc.setFontSize(10);
     doc.setTextColor(100, 100, 100);
     doc.text('www.doctrez1-cyber.github.io/app_codigo_insulina', 105, 280, { align: 'center' });
@@ -401,7 +414,10 @@ function generarPDFInterno(resultados, tipo, nombreUsuario) {
     doc.save(`resultados_${tipo}_${new Date().toISOString().slice(0,10)}.pdf`);
 }
 
-// Exportar funciones globales
+// ============================================================
+// 10. EXPORTAR FUNCIONES GLOBALES
+// ============================================================
+
 window.guardarTestSintomas = guardarTestSintomas;
 window.guardarTestEntorno = guardarTestEntorno;
 window.guardarTestFuerza = guardarTestFuerza;
@@ -415,3 +431,8 @@ window.solicitarLibro = solicitarLibro;
 window.solicitarCitaOnline = solicitarCitaOnline;
 window.solicitarVisita = solicitarVisita;
 window.generarPDF = generarPDF;
+window.instalarApp = instalarApp;
+window.esDispositivoIOS = esDispositivoIOS;
+window.estaInstalada = estaInstalada;
+
+console.log('✅ App "El Código de la Insulina" cargada correctamente.');
