@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Progreso - El Código de la Insulina</title>
+    <link rel="stylesheet" href="estilo.css" />
+    <link rel="manifest" href="manifest.json" />
+    <link rel="icon" href="logo.png" type="image/png" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .chart-container {
+            background: white;
+            border-radius: 16px;
+            padding: 16px;
+            border: 1px solid #e8f0e8;
+            margin-bottom: 20px;
+        }
+        .chart-container h3 {
+            color: #1B5E20;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+        .nav-bottom {
+            display: flex;
+            justify-content: space-around;
+            background: white;
+            border-top: 1px solid #e8f0e8;
+            padding: 8px 0 4px;
+            margin-top: 20px;
+            border-radius: 0 0 28px 28px;
+        }
+        .nav-bottom .nav-item {
+            text-align: center;
+            font-size: 11px;
+            color: #8a9a8a;
+            text-decoration: none;
+            padding: 4px 8px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .nav-bottom .nav-item.active {
+            color: #1B5E20;
+            font-weight: 600;
+        }
+        .nav-bottom .nav-item .nav-icon {
+            font-size: 22px;
+            display: block;
+        }
+        .habitos-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 12px;
+        }
+        .habito-item {
+            background: #f9fbf9;
+            border-radius: 12px;
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #e8f0e8;
+        }
+        .habito-item .porcentaje {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1B5E20;
+        }
+        .habito-item .label {
+            font-size: 12px;
+            color: #5a6a5a;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <h2 style="color:#1B5E20;font-size:22px;">📈 Evolución Metabólica</h2>
+        <p style="font-size:14px;color:#5a6a5a;margin-bottom:16px;">Tus últimas semanas de progreso.</p>
+
+        <div class="chart-container">
+            <h3>Índice HOMA-IR</h3>
+            <canvas id="chartHOMA"></canvas>
+        </div>
+
+        <div class="chart-container">
+            <h3>Glucosa (mg/dL)</h3>
+            <canvas id="chartGlucosa"></canvas>
+        </div>
+
+        <div class="chart-container">
+            <h3>Cumplimiento de Hábitos</h3>
+            <div class="habitos-grid">
+                <div class="habito-item"><div class="porcentaje" id="habitoSueño">85%</div><div class="label">Sueño Reparador</div></div>
+                <div class="habito-item"><div class="porcentaje" id="habitoFuerza">70%</div><div class="label">Entrenamiento Fuerza</div></div>
+                <div class="habito-item"><div class="porcentaje" id="habitoAyuno">92%</div><div class="label">Ventana de Ayuno</div></div>
+                <div class="habito-item"><div class="porcentaje" id="habitoComidas">78%</div><div class="label">Secuencia 1-2-3</div></div>
+            </div>
+        </div>
+
+        <div class="nav-bottom">
+            <a href="dashboard.html" class="nav-item"><span class="nav-icon">🏠</span>Inicio</a>
+            <a href="tests.html" class="nav-item"><span class="nav-icon">📋</span>Tests</a>
+            <a href="comidas.html" class="nav-item"><span class="nav-icon">🍽️</span>Comidas</a>
+            <a href="progreso.html" class="nav-item active"><span class="nav-icon">📈</span>Progreso</a>
+            <a href="perfil.html" class="nav-item"><span class="nav-icon">👤</span>Perfil</a>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        const user = obtenerDatosUsuario();
+        if (!user) window.location.href = 'index.html';
+
+        // Datos de ejemplo para gráficas
+        const labels = ['Sem 1', 'Sem 2', 'Sem 3', 'Sem 4'];
+        const homaData = [2.8, 2.5, 2.1, 1.8];
+        const glucosaData = [105, 100, 96, 92];
+
+        new Chart(document.getElementById('chartHOMA'), {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'HOMA-IR',
+                    data: homaData,
+                    borderColor: '#1B5E20',
+                    backgroundColor: 'rgba(27,94,32,0.1)',
+                    fill: true,
+                    tension: 0.3
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: false } }
+            }
+        });
+
+        new Chart(document.getElementById('chartGlucosa'), {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Glucosa',
+                    data: glucosaData,
+                    borderColor: '#4CAF50',
+                    backgroundColor: 'rgba(76,175,80,0.1)',
+                    fill: true,
+                    tension: 0.3
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: false } }
+            }
+        });
+    </script>
+</body>
+</html>

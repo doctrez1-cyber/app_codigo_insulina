@@ -1,0 +1,199 @@
+/* ===== RESET Y BASE ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background: #f5f7f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 16px;
+}
+
+#app {
+    width: 100%;
+    max-width: 420px;
+    background: white;
+    border-radius: 28px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+    padding: 24px 20px 30px;
+    min-height: 580px;
+}
+
+/* ===== LOGO Y TÍTULOS ===== */
+.logo-container {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.logo {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    border-radius: 50%;
+    background: #e8f5e9;
+    padding: 8px;
+    margin-bottom: 10px;
+}
+
+.logo-container h1 {
+    font-size: 24px;
+    color: #1B5E20;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+}
+
+.slogan {
+    font-size: 14px;
+    color: #558b2f;
+    font-weight: 400;
+    margin-top: 2px;
+}
+
+/* ===== FORMULARIOS ===== */
+.form-group {
+    margin-bottom: 16px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: #2e3b2e;
+    margin-bottom: 4px;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1.5px solid #dce8dc;
+    border-radius: 12px;
+    font-size: 15px;
+    background: #fafcfa;
+    transition: border 0.2s;
+    outline: none;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    border-color: #388E3C;
+    background: white;
+}
+
+/* ===== BOTONES ===== */
+.btn-primary {
+    width: 100%;
+    padding: 14px;
+    background: #1B5E20;
+    color: white;
+    border: none;
+    border-radius: 14px;
+    font-size: 17px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    margin-top: 6px;
+}
+
+.btn-primary:hover {
+    background: #2e7d32;
+}
+
+.btn-primary:active {
+    transform: scale(0.97);
+}
+
+.btn-secondary {
+    width: 100%;
+    padding: 14px;
+    background: #e8f5e9;
+    color: #1B5E20;
+    border: 1.5px solid #1B5E20;
+    border-radius: 14px;
+    font-size: 17px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+    margin-top: 6px;
+}
+
+.btn-secondary:hover {
+    background: #c8e6c9;
+}
+
+/* ===== ENLACES ===== */
+.link-text {
+    text-align: center;
+    font-size: 14px;
+    color: #4a5a4a;
+    margin-top: 16px;
+}
+
+.link-text span {
+    color: #1B5E20;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.link-text span:hover {
+    color: #2e7d32;
+}
+
+/* ===== ERRORES ===== */
+.error-message {
+    color: #c62828;
+    font-size: 13px;
+    text-align: center;
+    margin-top: 10px;
+    min-height: 20px;
+}
+
+/* ===== BOTONES DE WHATSAPP ===== */
+.whatsapp-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #25D366;
+    color: white;
+    padding: 12px 18px;
+    border-radius: 30px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 15px;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s;
+    width: 100%;
+    justify-content: center;
+    margin-top: 8px;
+}
+
+.whatsapp-btn:hover {
+    background: #1ebe5c;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 480px) {
+    #app {
+        padding: 20px 16px 24px;
+        border-radius: 20px;
+    }
+
+    .logo {
+        width: 64px;
+        height: 64px;
+    }
+
+    .logo-container h1 {
+        font-size: 20px;
+    }
+}

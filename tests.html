@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Tests - El Código de la Insulina</title>
+    <link rel="stylesheet" href="estilo.css" />
+    <link rel="manifest" href="manifest.json" />
+    <link rel="icon" href="logo.png" type="image/png" />
+    <style>
+        .tab-nav {
+            display: flex;
+            gap: 6px;
+            background: #eef3ee;
+            border-radius: 14px;
+            padding: 4px;
+            margin-bottom: 20px;
+        }
+        .tab-nav .tab {
+            flex: 1;
+            padding: 10px 6px;
+            text-align: center;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #4a5a4a;
+            border: none;
+            background: transparent;
+        }
+        .tab-nav .tab.active {
+            background: white;
+            color: #1B5E20;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .pregunta {
+            background: #f9fbf9;
+            border-radius: 12px;
+            padding: 14px 16px;
+            margin-bottom: 12px;
+            border: 1px solid #e8f0e8;
+        }
+        .pregunta .label {
+            font-weight: 600;
+            font-size: 14px;
+            color: #1B5E20;
+            margin-bottom: 6px;
+        }
+        .pregunta .opciones {
+            display: flex;
+            gap: 10px;
+        }
+        .pregunta .opciones label {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .btn-whatsapp {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #25D366;
+            color: white;
+            padding: 10px 18px;
+            border-radius: 30px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        .btn-whatsapp:hover { background: #1ebe5c; }
+        .resultado-box {
+            background: #e8f5e9;
+            border-radius: 12px;
+            padding: 16px;
+            margin: 16px 0;
+            text-align: center;
+        }
+        .resultado-box .puntaje {
+            font-size: 32px;
+            font-weight: 700;
+            color: #1B5E20;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <h2 style="color:#1B5E20;font-size:22px;">🧪 Tests Metabólicos</h2>
+        <p style="font-size:14px;color:#5a6a5a;margin-bottom:16px;">Evalúa tu estado metabólico completo</p>
+
+        <!-- TABS -->
+        <div class="tab-nav">
+            <button class="tab active" data-tab="tabSintomas">Síntomas</button>
+            <button class="tab" data-tab="tabEntorno">Entorno</button>
+            <button class="tab" data-tab="tabFuerza">Fuerza</button>
+        </div>
+
+        <!-- TAB 1: SÍNTOMAS -->
+        <div id="tabSintomas" class="tab-content active">
+            <h3 style="margin-bottom:12px;">📋 Test de Síntomas</h3>
+            <div id="sintomasContainer">
+                <!-- Las preguntas se generan con JS -->
+            </div>
+            <button class="btn-primary" id="calcularSintomas">Calcular mi riesgo</button>
+            <div id="resultadoSintomas" class="resultado-box" style="display:none;"></div>
+            <button class="btn-whatsapp" id="whatsappSintomas" style="display:none;">📱 Enviar resultado por WhatsApp</button>
+        </div>
+
+        <!-- TAB 2: ENTORNO -->
+        <div id="tabEntorno" class="tab-content">
+            <h3 style="margin-bottom:12px;">🌿 Test de Entorno</h3>
+            <div id="entornoContainer"></div>
+            <button class="btn-primary" id="calcularEntorno">Calcular Score Ambiental</button>
+            <div id="resultadoEntorno" class="resultado-box" style="display:none;"></div>
+        </div>
+
+        <!-- TAB 3: FUERZA -->
+        <div id="tabFuerza" class="tab-content">
+            <h3 style="margin-bottom:12px;">💪 Test de Fuerza Muscular</h3>
+            <div id="fuerzaContainer"></div>
+            <button class="btn-primary" id="calcularFuerza">Calcular nivel muscular</button>
+            <div id="resultadoFuerza" class="resultado-box" style="display:none;"></div>
+        </div>
+
+        <!-- NAVEGACIÓN INFERIOR -->
+        <div class="nav-bottom" style="margin-top:24px;">
+            <a href="dashboard.html" class="nav-item"><span class="nav-icon">🏠</span>Inicio</a>
+            <a href="tests.html" class="nav-item active"><span class="nav-icon">📋</span>Tests</a>
+            <a href="comidas.html" class="nav-item"><span class="nav-icon">🍽️</span>Comidas</a>
+            <a href="progreso.html" class="nav-item"><span class="nav-icon">📈</span>Progreso</a>
+            <a href="perfil.html" class="nav-item"><span class="nav-icon">👤</span>Perfil</a>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        // ===== DATOS DE PREGUNTAS =====
+        const sintomasData = [
+            { id: 's1', label: 'Manchas oscuras en el cuello o axilas (Acantosis nigricans)' },
+            { id: 's2', label: 'Pequeños "pellejitos" en la piel (Acrocordones)' },
+            { id: 's3', label: 'Cansancio extremo después de comer (Sueño postprandial)' },
+            { id: 's4', label: 'Niebla mental o dificultad para concentrarte' },
+            { id: 's5', label: 'Antojos irresistibles de dulces o carbohidratos' },
+            { id: 's6', label: 'Grasa acumulada en el abdomen' }
+        ];
+
+        const entornoData = [
+            { id: 'e1', label: '¿A qué hora te acuestas habitualmente?', opts: ['Antes 10pm', '10pm-12am', 'Después 12am'] },
+            { id: 'e2', label: '¿Cómo calificas tu estrés diario?', opts: ['Bajo', 'Medio', 'Alto'] },
+            { id: 'e3', label: '¿Cuánto tiempo pasa entre tu última comida y dormir?', opts: ['Menos 2h', '2-3h', 'Más 3h'] },
+            { id: 'e4', label: '¿Sientes hinchazón, gases o molestias digestivas?', opts: ['Nunca', 'A veces', 'Siempre'] },
+            { id: 'e5', label: '¿Usas plásticos para calentar comida o productos de limpieza fuertes?', opts: ['Nunca', 'A veces', 'Siempre'] }
+        ];
+
+        const fuerzaData = [
+            { id: 'f1', label: 'Prueba de la Silla (repeticiones en 60 segundos)', type: 'number' },
+            { id: 'f2', label: 'Prueba de Plancha (segundos aguantando)', type: 'number' },
+            { id: 'f3', label: 'Capacidad de Carga (segundos sosteniendo 5kg en cada mano)', type: 'number' }
+        ];
+
+        // ===== RENDERIZAR PREGUNTAS =====
+        function renderSintomas() {
+            const container = document.getElementById('sintomasContainer');
+            container.innerHTML = sintomasData.map((p, i) => `
+                <div class="pregunta">
+                    <div class="label">${i+1}. ${p.label}</div>
+                    <div class="opciones">
+                        ${['Nunca','A veces','Frecuentemente'].map((txt, idx) => `
+                            <label>
+                                <input type="radio" name="${p.id}" value="${idx}" />
+                                ${txt}
+                            </label>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderEntorno() {
+            const container = document.getElementById('entornoContainer');
+            container.innerHTML = entornoData.map((p, i) => `
+                <div class="pregunta">
+                    <div class="label">${i+1}. ${p.label}</div>
+                    <div class="opciones">
+                        ${p.opts.map((txt, idx) => `
+                            <label>
+                                <input type="radio" name="${p.id}" value="${idx}" />
+                                ${txt}
+                            </label>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderFuerza() {
+            const container = document.getElementById('fuerzaContainer');
+            container.innerHTML = fuerzaData.map((p, i) => `
+                <div class="pregunta">
+                    <div class="label">${i+1}. ${p.label}</div>
+                    <input type="number" id="${p.id}" placeholder="Ingresa valor" style="width:100%;padding:10px;border:1px solid #dce8dc;border-radius:10px;font-size:15px;" />
+                </div>
+            `).join('');
+        }
+
+        renderSintomas();
+        renderEntorno();
+        renderFuerza();
+
+        // ===== TABS =====
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                document.getElementById(this.dataset.tab).classList.add('active');
+            });
+        });
+
+        // ===== CALCULAR SÍNTOMAS =====
+        document.getElementById('calcularSintomas').addEventListener('click', function() {
+            let total = 0;
+            sintomasData.forEach(p => {
+                const selected = document.querySelector(`input[name="${p.id}"]:checked`);
+                if (selected) total += parseInt(selected.value);
+            });
+            const resultado = document.getElementById('resultadoSintomas');
+            resultado.style.display = 'block';
+            let label, mensaje;
+            if (total <= 4) { label = 'Óptimo'; mensaje = 'Tu metabolismo está en equilibrio. Sigue así.'; }
+            else if (total <= 7) { label = 'Alerta'; mensaje = 'Hay señales tempranas. Toma acción ahora.'; }
+            else if (total <= 10) { label = 'Resistencia'; mensaje = 'Resistencia a la insulina detectada. Sigue el plan.'; }
+            else { label = 'Crítico'; mensaje = 'Es importante que consultes a tu médico.'; }
+            resultado.innerHTML = `
+                <div class="puntaje">${total} / 12</div>
+                <div style="font-size:20px;font-weight:600;">${label}</div>
+                <div style="font-size:14px;color:#3a5a3a;">${mensaje}</div>
+            `;
+            document.getElementById('whatsappSintomas').style.display = 'inline-flex';
+            // Guardar en localStorage
+            const user = obtenerDatosUsuario();
+            if (user) {
+                // Aquí se guarda automáticamente al usar la función global
+                guardarTestSintomas({
+                    puntaje: total,
+                    clasificacion: label,
+                    glucosa: 92, // placeholder
+                    homaIr: (total / 12 * 2.5).toFixed(1),
+                    perimetroAbdominal: 84 // placeholder
+                });
+            }
+        });
+
+        // ===== WHATSAPP RESULTADOS =====
+        document.getElementById('whatsappSintomas').addEventListener('click', function() {
+            const resultado = document.getElementById('resultadoSintomas').innerText;
+            enviarResultados(resultado);
+        });
+
+        // ===== CALCULAR ENTORNO =====
+        document.getElementById('calcularEntorno').addEventListener('click', function() {
+            let total = 0;
+            entornoData.forEach(p => {
+                const selected = document.querySelector(`input[name="${p.id}"]:checked`);
+                if (selected) total += parseInt(selected.value);
+            });
+            const resultado = document.getElementById('resultadoEntorno');
+            resultado.style.display = 'block';
+            let nivel = total <= 12 ? '🟢 Verde (Entorno Protector)' :
+                        total <= 28 ? '🟡 Amarillo (Entorno Hostil)' :
+                        '🔴 Rojo (Entorno de Guerra)';
+            resultado.innerHTML = `
+                <div class="puntaje">${total} / 46</div>
+                <div style="font-size:20px;font-weight:600;">${nivel}</div>
+            `;
+            guardarTestEntorno({
+                puntajeCronodisrupcion: Math.floor(total/4),
+                puntajeEstres: Math.floor(total/3),
+                puntajeIntestinal: Math.floor(total/3),
+                puntajeQuimico: Math.floor(total/3),
+                scoreAmbiental: total,
+                nivelRiesgo: nivel
+            });
+        });
+
+        // ===== CALCULAR FUERZA =====
+        document.getElementById('calcularFuerza').addEventListener('click', function() {
+            const silla = parseInt(document.getElementById('f1').value) || 0;
+            const plancha = parseInt(document.getElementById('f2').value) || 0;
+            const carga = parseInt(document.getElementById('f3').value) || 0;
+            const total = silla + plancha + carga;
+            const resultado = document.getElementById('resultadoFuerza');
+            resultado.style.display = 'block';
+            let nivel = total < 50 ? 'Depósito vacío' :
+                        total < 100 ? 'Recuperación' :
+                        'Farmacia activa';
+            resultado.innerHTML = `
+                <div class="puntaje">${total} puntos</div>
+                <div style="font-size:20px;font-weight:600;">${nivel}</div>
+            `;
+            guardarTestFuerza({
+                testSillaRepeticiones: silla,
+                testPlanchaSegundos: plancha,
+                testCargaSegundos: carga,
+                puntajeTotal: total,
+                nivelMuscular: nivel
+            });
+        });
+    </script>
+</body>
+</html>

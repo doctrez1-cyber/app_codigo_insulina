@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Perfil - El Código de la Insulina</title>
+    <link rel="stylesheet" href="estilo.css" />
+    <link rel="manifest" href="manifest.json" />
+    <link rel="icon" href="logo.png" type="image/png" />
+    <style>
+        .perfil-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 14px 0;
+            border-bottom: 1px solid #eef3ee;
+        }
+        .perfil-item .label {
+            font-weight: 500;
+            color: #2a3a2a;
+        }
+        .perfil-item .value {
+            color: #4a5a4a;
+        }
+        .nav-bottom {
+            display: flex;
+            justify-content: space-around;
+            background: white;
+            border-top: 1px solid #e8f0e8;
+            padding: 8px 0 4px;
+            margin-top: 20px;
+            border-radius: 0 0 28px 28px;
+        }
+        .nav-bottom .nav-item {
+            text-align: center;
+            font-size: 11px;
+            color: #8a9a8a;
+            text-decoration: none;
+            padding: 4px 8px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .nav-bottom .nav-item.active {
+            color: #1B5E20;
+            font-weight: 600;
+        }
+        .nav-bottom .nav-item .nav-icon {
+            font-size: 22px;
+            display: block;
+        }
+        .whatsapp-row {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin: 16px 0;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div style="text-align:center;padding:8px 0 12px;">
+            <img src="logo.png" alt="Logo" style="width:80px;height:80px;border-radius:50%;background:#e8f5e9;padding:8px;" />
+            <h2 style="color:#1B5E20;font-size:22px;margin-top:6px;" id="perfilNombre">Usuario</h2>
+            <p style="color:#5a6a5a;font-size:14px;" id="perfilEmail">usuario@email.com</p>
+        </div>
+
+        <div class="perfil-item"><span class="label">Edad</span><span class="value" id="perfilEdad">--</span></div>
+        <div class="perfil-item"><span class="label">Sexo</span><span class="value" id="perfilSexo">--</span></div>
+        <div class="perfil-item"><span class="label">Estatura</span><span class="value" id="perfilEstatura">-- cm</span></div>
+        <div class="perfil-item"><span class="label">IMC</span><span class="value" id="perfilIMC">--</span></div>
+
+        <div style="margin:20px 0;">
+            <button class="btn-secondary" onclick="solicitarLibro()">📖 Solicitar el libro</button>
+            <button class="btn-secondary" onclick="solicitarCitaOnline()">📅 Cita online</button>
+            <button class="btn-secondary" onclick="solicitarVisita()">🏠 Visita domiciliaria</button>
+        </div>
+
+        <button class="btn-primary" onclick="cerrarSesion()" style="background:#c62828;">Cerrar sesión</button>
+
+        <div class="nav-bottom">
+            <a href="dashboard.html" class="nav-item"><span class="nav-icon">🏠</span>Inicio</a>
+            <a href="tests.html" class="nav-item"><span class="nav-icon">📋</span>Tests</a>
+            <a href="comidas.html" class="nav-item"><span class="nav-icon">🍽️</span>Comidas</a>
+            <a href="progreso.html" class="nav-item"><span class="nav-icon">📈</span>Progreso</a>
+            <a href="perfil.html" class="nav-item active"><span class="nav-icon">👤</span>Perfil</a>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        const user = obtenerDatosUsuario();
+        if (!user) window.location.href = 'index.html';
+
+        document.getElementById('perfilNombre').textContent = user.nombre || 'Usuario';
+        document.getElementById('perfilEmail').textContent = user.email || '';
+        document.getElementById('perfilEdad').textContent = user.edad || '--';
+        document.getElementById('perfilSexo').textContent = user.sexo || '--';
+        document.getElementById('perfilEstatura').textContent = user.estatura ? user.estatura + ' cm' : '--';
+
+        // IMC
+        const peso = parseFloat(localStorage.getItem('peso_actual')) || 70;
+        const estatura = user.estatura || 170;
+        const imc = (peso / ((estatura/100) ** 2)).toFixed(1);
+        document.getElementById('perfilIMC').textContent = imc + ' kg/m²';
+    </script>
+</body>
+</html>

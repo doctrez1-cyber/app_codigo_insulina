@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Recetas - El Código de la Insulina</title>
+    <link rel="stylesheet" href="estilo.css" />
+    <link rel="manifest" href="manifest.json" />
+    <link rel="icon" href="logo.png" type="image/png" />
+    <style>
+        .receta-card {
+            background: white;
+            border-radius: 16px;
+            padding: 16px;
+            border: 1px solid #e8f0e8;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+        }
+        .receta-card h3 {
+            color: #1B5E20;
+            margin-bottom: 6px;
+        }
+        .receta-card .ingredientes {
+            font-size: 14px;
+            color: #3a4a3a;
+            margin: 8px 0;
+        }
+        .receta-card .pasos {
+            font-size: 14px;
+            color: #4a5a4a;
+        }
+        .nav-bottom {
+            display: flex;
+            justify-content: space-around;
+            background: white;
+            border-top: 1px solid #e8f0e8;
+            padding: 8px 0 4px;
+            margin-top: 20px;
+            border-radius: 0 0 28px 28px;
+        }
+        .nav-bottom .nav-item {
+            text-align: center;
+            font-size: 11px;
+            color: #8a9a8a;
+            text-decoration: none;
+            padding: 4px 8px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .nav-bottom .nav-item.active {
+            color: #1B5E20;
+            font-weight: 600;
+        }
+        .nav-bottom .nav-item .nav-icon {
+            font-size: 22px;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <h2 style="color:#1B5E20;font-size:22px;">🍳 Recetas Metabólicas</h2>
+        <p style="font-size:14px;color:#5a6a5a;margin-bottom:16px;">Platos anti-insulinorresistentes</p>
+
+        <div class="receta-card">
+            <h3>🥑 Ensalada de Aguacate y Atún</h3>
+            <div class="ingredientes"><strong>Ingredientes:</strong> 1 lata de atún al agua, 1 aguacate, 1 tomate, cebolla morada, limón, cilantro.</div>
+            <div class="pasos"><strong>Preparación:</strong> Mezcla todos los ingredientes, aliña con limón y cilantro. Sirve frío.</div>
+        </div>
+
+        <div class="receta-card">
+            <h3>🍳 Huevos Revueltos con Espinacas</h3>
+            <div class="ingredientes"><strong>Ingredientes:</strong> 3 huevos, 2 tazas de espinacas, 1 diente de ajo, aceite de oliva, sal y pimienta.</div>
+            <div class="pasos"><strong>Preparación:</strong> Saltea el ajo y las espinacas, añade los huevos batidos y cocina a fuego bajo.</div>
+        </div>
+
+        <div class="receta-card">
+            <h3>🐟 Salmón al Horno con Brócoli</h3>
+            <div class="ingredientes"><strong>Ingredientes:</strong> 1 filete de salmón, 2 tazas de brócoli, aceite de oliva, ajo, limón.</div>
+            <div class="pasos"><strong>Preparación:</strong> Hornea el salmón y el brócoli a 200°C por 20 minutos. Aliña con ajo y limón.</div>
+        </div>
+
+        <div class="receta-card">
+            <h3>🥗 Poke Bowl de Pollo y Vegetales</h3>
+            <div class="ingredientes"><strong>Ingredientes:</strong> Pechuga de pollo, lechuga, zanahoria, pepino, aguacate, semillas de sésamo.</div>
+            <div class="pasos"><strong>Preparación:</strong> Cocina el pollo a la plancha. Corta vegetales y arma en un bowl.</div>
+        </div>
+
+        <div class="receta-card">
+            <h3>🥘 Sopa de Lentejas y Verduras</h3>
+            <div class="ingredientes"><strong>Ingredientes:</strong> Lentejas, zanahoria, apio, cebolla, tomate, comino, laurel.</div>
+            <div class="pasos"><strong>Preparación:</strong> Sofríe verduras, añade lentejas y agua. Cocina hasta que estén tiernas.</div>
+        </div>
+
+        <div class="receta-card">
+            <h3>🥤 Batido Verde Metabolico</h3>
+            <div class="ingredientes"><strong>Ingredientes:</strong> 1 taza de espinacas, 1/2 pepino, 1/2 manzana, jengibre, limón, agua.</div>
+            <div class="pasos"><strong>Preparación:</strong> Licúa todos los ingredientes con agua. Sirve frío.</div>
+        </div>
+
+        <div style="text-align:center;margin:20px 0;">
+            <button class="btn-whatsapp" onclick="solicitarLibro()">📖 ¿No tienes el libro? Solicítalo aquí</button>
+        </div>
+
+        <div class="nav-bottom">
+            <a href="dashboard.html" class="nav-item"><span class="nav-icon">🏠</span>Inicio</a>
+            <a href="tests.html" class="nav-item"><span class="nav-icon">📋</span>Tests</a>
+            <a href="comidas.html" class="nav-item"><span class="nav-icon">🍽️</span>Comidas</a>
+            <a href="recetas.html" class="nav-item active"><span class="nav-icon">🍳</span>Recetas</a>
+            <a href="perfil.html" class="nav-item"><span class="nav-icon">👤</span>Perfil</a>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

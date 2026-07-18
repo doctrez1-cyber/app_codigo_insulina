@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Comidas - El Código de la Insulina</title>
+    <link rel="stylesheet" href="estilo.css" />
+    <link rel="manifest" href="manifest.json" />
+    <link rel="icon" href="logo.png" type="image/png" />
+    <style>
+        .comida-card {
+            background: white;
+            border-radius: 16px;
+            padding: 16px;
+            border: 1px solid #e8f0e8;
+            margin-bottom: 12px;
+        }
+        .comida-card .fecha {
+            font-size: 12px;
+            color: #8a9a8a;
+        }
+        .comida-card .detalle {
+            font-size: 14px;
+            margin: 4px 0;
+        }
+        .nav-bottom {
+            display: flex;
+            justify-content: space-around;
+            background: white;
+            border-top: 1px solid #e8f0e8;
+            padding: 8px 0 4px;
+            margin-top: 20px;
+            border-radius: 0 0 28px 28px;
+        }
+        .nav-bottom .nav-item {
+            text-align: center;
+            font-size: 11px;
+            color: #8a9a8a;
+            text-decoration: none;
+            padding: 4px 8px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .nav-bottom .nav-item.active {
+            color: #1B5E20;
+            font-weight: 600;
+        }
+        .nav-bottom .nav-item .nav-icon {
+            font-size: 22px;
+            display: block;
+        }
+        .sensor-select {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 6px 0;
+        }
+        .sensor-select label {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <h2 style="color:#1B5E20;font-size:22px;">🍽️ Registro de Comidas</h2>
+        <p style="font-size:14px;color:#5a6a5a;margin-bottom:16px;">Lleva el control de tu alimentación y sensaciones post-ingesta.</p>
+
+        <div style="background:#f9fbf9;border-radius:16px;padding:16px;border:1px solid #e8f0e8;margin-bottom:16px;">
+            <div class="form-group">
+                <label>Tipo de comida</label>
+                <select id="tipoComida">
+                    <option value="desayuno">Desayuno</option>
+                    <option value="almuerzo">Almuerzo</option>
+                    <option value="cena">Cena</option>
+                    <option value="snack">Snack</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Alimentos consumidos</label>
+                <input type="text" id="alimentos" placeholder="Ej: Huevos con aguacate" />
+            </div>
+            <div class="form-group">
+                <label>Energía después de comer</label>
+                <select id="energiaPost">
+                    <option value="bajo">Bajo</option>
+                    <option value="normal">Normal</option>
+                    <option value="alto">Alto</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Claridad mental</label>
+                <select id="claridadMental">
+                    <option value="niebla">Niebla</option>
+                    <option value="normal">Normal</option>
+                    <option value="enfocado">Enfocado</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Saciedad</label>
+                <select id="saciedad">
+                    <option value="poca">Poca</option>
+                    <option value="normal">Normal</option>
+                    <option value="mucha">Mucha</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Antojos de dulce</label>
+                <select id="antojoDulce">
+                    <option value="nunca">Nunca</option>
+                    <option value="leve">Leve</option>
+                    <option value="fuerte">Fuerte</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>¿Seguiste la secuencia 1-2-3 (Fibra, Proteína, Almidón)?</label>
+                <select id="secuenciaSegura">
+                    <option value="true">Sí</option>
+                    <option value="false">No</option>
+                </select>
+            </div>
+            <button class="btn-primary" id="guardarComidaBtn">Guardar comida</button>
+        </div>
+
+        <h3 style="font-size:18px;color:#1B5E20;">Historial</h3>
+        <div id="historialComidas"></div>
+
+        <div class="nav-bottom">
+            <a href="dashboard.html" class="nav-item"><span class="nav-icon">🏠</span>Inicio</a>
+            <a href="tests.html" class="nav-item"><span class="nav-icon">📋</span>Tests</a>
+            <a href="comidas.html" class="nav-item active"><span class="nav-icon">🍽️</span>Comidas</a>
+            <a href="progreso.html" class="nav-item"><span class="nav-icon">📈</span>Progreso</a>
+            <a href="perfil.html" class="nav-item"><span class="nav-icon">👤</span>Perfil</a>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        const user = obtenerDatosUsuario();
+        if (!user) window.location.href = 'index.html';
+
+        function cargarHistorial() {
+            const container = document.getElementById('historialComidas');
+            const comidas = user.comidas || [];
+            if (comidas.length === 0) {
+                container.innerHTML = '<p style="color:#8a9a8a;">Aún no has registrado comidas.</p>';
+                return;
+            }
+            container.innerHTML = comidas.map(c => `
+                <div class="comida-card">
+                    <div class="fecha">${new Date(c.fecha).toLocaleDateString()}</div>
+                    <div class="detalle"><strong>${c.tipo}:</strong> ${c.alimentos || 'Sin descripción'}</div>
+                    <div class="detalle">⚡ ${c.energiaPost} | 🧠 ${c.claridadMental} | 🍽️ ${c.saciedad}</div>
+                </div>
+            `).join('');
+        }
+
+        cargarHistorial();
+
+        document.getElementById('guardarComidaBtn').addEventListener('click', function() {
+            const comida = {
+                tipo: document.getElementById('tipoComida').value,
+                alimentos: document.getElementById('alimentos').value.trim(),
+                energiaPost: document.getElementById('energiaPost').value,
+                claridadMental: document.getElementById('claridadMental').value,
+                saciedad: document.getElementById('saciedad').value,
+                antojoDulce: document.getElementById('antojoDulce').value,
+                secuenciaSegura: document.getElementById('secuenciaSegura').value === 'true'
+            };
+            if (!comida.alimentos) {
+                alert('Por favor, describe los alimentos consumidos.');
+                return;
+            }
+            guardarComida(comida);
+            alert('¡Comida registrada correctamente!');
+            window.location.reload();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>El Código de la Insulina</title>
+    <link rel="stylesheet" href="estilo.css" />
+    <link rel="manifest" href="manifest.json" />
+    <link rel="icon" href="logo.png" type="image/png" />
+</head>
+<body>
+    <div id="app">
+        <!-- Contenedor para Login y Registro -->
+        <div id="authContainer">
+            <!-- LOGIN -->
+            <div id="loginForm">
+                <div class="logo-container">
+                    <img src="logo.png" alt="Logo" class="logo" id="logoImg" />
+                    <h1>El Código de la Insulina</h1>
+                    <p class="slogan">Descodifica tu metabolismo, recupera tu energía</p>
+                </div>
+                <div class="form-group">
+                    <label>Correo electrónico</label>
+                    <input type="email" id="loginEmail" placeholder="ejemplo@correo.com" />
+                </div>
+                <div class="form-group">
+                    <label>Contraseña</label>
+                    <input type="password" id="loginPassword" placeholder="Tu contraseña" />
+                </div>
+                <button class="btn-primary" id="loginBtn">Iniciar sesión</button>
+                <p class="link-text">
+                    ¿No tienes cuenta? <span id="goToRegister">Regístrate aquí</span>
+                </p>
+                <p id="loginError" class="error-message"></p>
+            </div>
+
+            <!-- REGISTRO -->
+            <div id="registerForm" style="display:none;">
+                <div class="logo-container">
+                    <img src="logo.png" alt="Logo" class="logo" id="logoImg2" />
+                    <h1>El Código de la Insulina</h1>
+                    <p class="slogan">Toma las riendas de tu salud</p>
+                </div>
+                <div class="form-group">
+                    <label>Nombre completo</label>
+                    <input type="text" id="regNombre" placeholder="Tu nombre" />
+                </div>
+                <div class="form-group">
+                    <label>Edad</label>
+                    <input type="number" id="regEdad" placeholder="Ej: 35" />
+                </div>
+                <div class="form-group">
+                    <label>Sexo</label>
+                    <select id="regSexo">
+                        <option value="masculino">Masculino</option>
+                        <option value="femenino">Femenino</option>
+                        <option value="otro">Otro</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Estatura (cm)</label>
+                    <input type="number" id="regEstatura" placeholder="Ej: 175" step="0.5" />
+                </div>
+                <div class="form-group">
+                    <label>Correo electrónico</label>
+                    <input type="email" id="regEmail" placeholder="ejemplo@correo.com" />
+                </div>
+                <div class="form-group">
+                    <label>Contraseña</label>
+                    <input type="password" id="regPassword" placeholder="Mínimo 6 caracteres" />
+                </div>
+                <button class="btn-primary" id="registerBtn">Registrarse</button>
+                <p class="link-text">
+                    ¿Ya tienes cuenta? <span id="goToLogin">Inicia sesión aquí</span>
+                </p>
+                <p id="registerError" class="error-message"></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

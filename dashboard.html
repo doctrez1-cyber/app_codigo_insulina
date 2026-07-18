@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Inicio - El Código de la Insulina</title>
+    <link rel="stylesheet" href="estilo.css" />
+    <link rel="manifest" href="manifest.json" />
+    <link rel="icon" href="logo.png" type="image/png" />
+    <style>
+        /* Estilos específicos del dashboard */
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0 16px;
+        }
+        .dashboard-header .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .dashboard-header .user-info .avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: #1B5E20;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 18px;
+        }
+        .dashboard-header .user-info .name {
+            font-weight: 600;
+            font-size: 18px;
+            color: #1B5E20;
+        }
+        .dashboard-header .user-info .email {
+            font-size: 12px;
+            color: #6a7a6a;
+        }
+
+        .metric-card {
+            background: white;
+            border-radius: 16px;
+            padding: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            border: 1px solid #e8f0e8;
+            text-align: center;
+            flex: 1;
+        }
+        .metric-card .value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1B5E20;
+        }
+        .metric-card .label {
+            font-size: 12px;
+            color: #6a7a6a;
+            margin-top: 2px;
+        }
+        .metric-row {
+            display: flex;
+            gap: 10px;
+            margin: 16px 0;
+        }
+
+        .quick-access {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 16px 0;
+        }
+        .quick-access .item {
+            background: #e8f5e9;
+            border-radius: 12px;
+            padding: 14px 10px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 14px;
+            color: #1B5E20;
+            cursor: pointer;
+            transition: background 0.2s;
+            text-decoration: none;
+        }
+        .quick-access .item:hover {
+            background: #c8e6c9;
+        }
+        .quick-access .item .icon {
+            font-size: 24px;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .checkin-card {
+            background: #f9fbf9;
+            border-radius: 16px;
+            padding: 16px;
+            border: 1px solid #e0ece0;
+            margin: 16px 0;
+        }
+        .checkin-card .title {
+            font-weight: 600;
+            color: #1B5E20;
+        }
+        .checkin-card .sub {
+            font-size: 13px;
+            color: #5a6a5a;
+        }
+        .checkin-card button {
+            margin-top: 10px;
+        }
+
+        .nav-bottom {
+            display: flex;
+            justify-content: space-around;
+            background: white;
+            border-top: 1px solid #e8f0e8;
+            padding: 8px 0 4px;
+            margin-top: 20px;
+            border-radius: 0 0 28px 28px;
+        }
+        .nav-bottom .nav-item {
+            text-align: center;
+            font-size: 11px;
+            color: #8a9a8a;
+            text-decoration: none;
+            padding: 4px 8px;
+            border-radius: 8px;
+            transition: background 0.2s;
+            cursor: pointer;
+        }
+        .nav-bottom .nav-item.active {
+            color: #1B5E20;
+            font-weight: 600;
+        }
+        .nav-bottom .nav-item .nav-icon {
+            font-size: 22px;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <!-- HEADER -->
+        <div class="dashboard-header">
+            <div class="user-info">
+                <div class="avatar" id="avatarInicial">A</div>
+                <div>
+                    <div class="name" id="userNombre">Usuario</div>
+                    <div class="email" id="userEmail">usuario@email.com</div>
+                </div>
+            </div>
+            <button class="btn-secondary" style="width:auto;padding:8px 14px;font-size:13px;" onclick="cerrarSesion()">Salir</button>
+        </div>
+
+        <!-- ESTADO METABÓLICO -->
+        <div style="background:#1B5E20;color:white;border-radius:20px;padding:20px;text-align:center;margin-bottom:16px;">
+            <div style="font-size:14px;opacity:0.8;">Estado Metabólico</div>
+            <div style="font-size:48px;font-weight:700;" id="estadoPorcentaje">75%</div>
+            <div style="font-size:18px;font-weight:500;" id="estadoLabel">Óptimo</div>
+            <div style="font-size:13px;opacity:0.8;margin-top:4px;" id="estadoMensaje">Tu resistencia a la insulina ha mejorado un 12% esta semana.</div>
+        </div>
+
+        <!-- MÉTRICAS -->
+        <div class="metric-row">
+            <div class="metric-card">
+                <div class="value" id="metricaGlucosa">--</div>
+                <div class="label">Glucosa (mg/dL)</div>
+            </div>
+            <div class="metric-card">
+                <div class="value" id="metricaHOMA">--</div>
+                <div class="label">HOMA-IR</div>
+            </div>
+            <div class="metric-card">
+                <div class="value" id="metricaCintura">--</div>
+                <div class="label">Cintura (cm)</div>
+            </div>
+        </div>
+
+        <!-- CHECK-IN DIARIO -->
+        <div class="checkin-card">
+            <div class="title">📋 Check-in Diario</div>
+            <div class="sub">Responde 3 preguntas sobre tu energía, sueño y antojos.</div>
+            <button class="btn-primary" onclick="window.location.href='comidas.html'">Empezar check-in</button>
+        </div>
+
+        <!-- ACCESO RÁPIDO -->
+        <div class="quick-access">
+            <a href="tests.html" class="item"><span class="icon">🩺</span>Test de Síntomas</a>
+            <a href="tests.html" class="item"><span class="icon">🌿</span>Test de Entorno</a>
+            <a href="tests.html" class="item"><span class="icon">💪</span>Test de Fuerza</a>
+            <a href="recetas.html" class="item"><span class="icon">🍳</span>Recetas</a>
+        </div>
+
+        <!-- NAVEGACIÓN INFERIOR -->
+        <div class="nav-bottom">
+            <a href="dashboard.html" class="nav-item active"><span class="nav-icon">🏠</span>Inicio</a>
+            <a href="tests.html" class="nav-item"><span class="nav-icon">📋</span>Tests</a>
+            <a href="comidas.html" class="nav-item"><span class="nav-icon">🍽️</span>Comidas</a>
+            <a href="progreso.html" class="nav-item"><span class="nav-icon">📈</span>Progreso</a>
+            <a href="perfil.html" class="nav-item"><span class="nav-icon">👤</span>Perfil</a>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        // Cargar datos del usuario
+        const user = obtenerDatosUsuario();
+        if (!user) {
+            window.location.href = 'index.html';
+        }
+
+        document.getElementById('userNombre').textContent = user.nombre || 'Usuario';
+        document.getElementById('userEmail').textContent = user.email || '';
+        document.getElementById('avatarInicial').textContent = (user.nombre || 'U')[0].toUpperCase();
+
+        // Cargar métricas del último test de síntomas
+        const sintomas = user.tests?.sintomas || [];
+        if (sintomas.length > 0) {
+            const ultimo = sintomas[sintomas.length - 1];
+            document.getElementById('metricaGlucosa').textContent = ultimo.glucosa || '--';
+            document.getElementById('metricaHOMA').textContent = ultimo.homaIr || '--';
+            document.getElementById('metricaCintura').textContent = ultimo.perimetroAbdominal || '--';
+
+            // Estado metabólico
+            const puntaje = ultimo.puntaje || 0;
+            let label, mensaje, porcentaje;
+            if (puntaje <= 4) { label = 'Óptimo'; mensaje = 'Tu metabolismo está en equilibrio. Sigue así.'; porcentaje = '85%'; }
+            else if (puntaje <= 7) { label = 'Alerta'; mensaje = 'Hay señales tempranas. Toma acción ahora.'; porcentaje = '60%'; }
+            else if (puntaje <= 10) { label = 'Resistencia'; mensaje = 'Resistencia a la insulina detectada. Sigue el plan.'; porcentaje = '40%'; }
+            else { label = 'Crítico'; mensaje = 'Es importante que consultes a tu médico y sigas el protocolo.'; porcentaje = '20%'; }
+            document.getElementById('estadoLabel').textContent = label;
+            document.getElementById('estadoMensaje').textContent = mensaje;
+            document.getElementById('estadoPorcentaje').textContent = porcentaje;
+        } else {
+            document.getElementById('estadoPorcentaje').textContent = '--';
+            document.getElementById('estadoLabel').textContent = 'Sin evaluar';
+            document.getElementById('estadoMensaje').textContent = 'Completa el Test de Síntomas para conocer tu estado metabólico.';
+        }
+    </script>
+</body>
+</html>
