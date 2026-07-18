@@ -8,7 +8,6 @@
     <link rel="manifest" href="manifest.json" />
     <link rel="icon" href="logo.png" type="image/png" />
     <style>
-        /* Estilos específicos del dashboard */
         .dashboard-header {
             display: flex;
             justify-content: space-between;
@@ -41,7 +40,6 @@
             font-size: 12px;
             color: #6a7a6a;
         }
-
         .metric-card {
             background: white;
             border-radius: 16px;
@@ -66,7 +64,6 @@
             gap: 10px;
             margin: 16px 0;
         }
-
         .quick-access {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -93,7 +90,6 @@
             display: block;
             margin-bottom: 4px;
         }
-
         .checkin-card {
             background: #f9fbf9;
             border-radius: 16px;
@@ -112,7 +108,6 @@
         .checkin-card button {
             margin-top: 10px;
         }
-
         .nav-bottom {
             display: flex;
             justify-content: space-around;
@@ -140,6 +135,21 @@
             font-size: 22px;
             display: block;
         }
+        .btn-secondary {
+            width: auto;
+            padding: 8px 14px;
+            background: #e8f5e9;
+            color: #1B5E20;
+            border: 1.5px solid #1B5E20;
+            border-radius: 14px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-secondary:hover {
+            background: #c8e6c9;
+        }
     </style>
 </head>
 <body>
@@ -153,7 +163,17 @@
                     <div class="email" id="userEmail">usuario@email.com</div>
                 </div>
             </div>
-            <button class="btn-secondary" style="width:auto;padding:8px 14px;font-size:13px;" onclick="cerrarSesion()">Salir</button>
+            <button class="btn-secondary" onclick="cerrarSesion()">Salir</button>
+        </div>
+
+        <!-- BLOQUE DE INSTALACIÓN -->
+        <div id="instalacionAndroid" style="display:none; background:#e8f5e9; padding:10px 14px; border-radius:12px; margin-bottom:16px; text-align:center; border:1px solid #1B5E20;">
+            <p style="font-weight:600; color:#1B5E20; margin-bottom:4px; font-size:14px;">📲 Instala esta app</p>
+            <button class="btn-primary" style="width:auto; padding:6px 18px; font-size:13px;" onclick="instalarApp()">Instalar ahora</button>
+        </div>
+        <div id="instalacionIOS" style="display:none; background:#f0f4f0; padding:10px 14px; border-radius:12px; margin-bottom:16px; text-align:center; border:1px solid #1B5E20;">
+            <p style="font-weight:600; color:#1B5E20; margin-bottom:4px; font-size:14px;">📱 Agrega a tu pantalla de inicio</p>
+            <p style="font-size:12px; color:#3a5a3a;">Usa el botón Compartir <span style="font-size:16px;">⬆️</span> y selecciona "Agregar a pantalla de inicio".</p>
         </div>
 
         <!-- ESTADO METABÓLICO -->
@@ -207,17 +227,13 @@
 
     <script src="app.js"></script>
     <script>
-        // Cargar datos del usuario
         const user = obtenerDatosUsuario();
-        if (!user) {
-            window.location.href = 'index.html';
-        }
+        if (!user) window.location.href = 'index.html';
 
         document.getElementById('userNombre').textContent = user.nombre || 'Usuario';
         document.getElementById('userEmail').textContent = user.email || '';
         document.getElementById('avatarInicial').textContent = (user.nombre || 'U')[0].toUpperCase();
 
-        // Cargar métricas del último test de síntomas
         const sintomas = user.tests?.sintomas || [];
         if (sintomas.length > 0) {
             const ultimo = sintomas[sintomas.length - 1];
@@ -225,7 +241,6 @@
             document.getElementById('metricaHOMA').textContent = ultimo.homaIr || '--';
             document.getElementById('metricaCintura').textContent = ultimo.perimetroAbdominal || '--';
 
-            // Estado metabólico
             const puntaje = ultimo.puntaje || 0;
             let label, mensaje, porcentaje;
             if (puntaje <= 4) { label = 'Óptimo'; mensaje = 'Tu metabolismo está en equilibrio. Sigue así.'; porcentaje = '85%'; }
