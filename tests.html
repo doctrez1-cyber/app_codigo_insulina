@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="estilo.css" />
     <link rel="manifest" href="manifest.json" />
     <link rel="icon" href="logo.png" type="image/png" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         .tab-nav {
             display: flex;
@@ -77,6 +78,7 @@
             cursor: pointer;
             margin-top: 10px;
             font-size: 14px;
+            text-decoration: none;
         }
         .btn-whatsapp:hover { background: #1ebe5c; }
         .resultado-box {
@@ -91,6 +93,44 @@
             font-weight: 700;
             color: #1B5E20;
         }
+        .nav-bottom {
+            display: flex;
+            justify-content: space-around;
+            background: white;
+            border-top: 1px solid #e8f0e8;
+            padding: 8px 0 4px;
+            margin-top: 20px;
+            border-radius: 0 0 28px 28px;
+        }
+        .nav-bottom .nav-item {
+            text-align: center;
+            font-size: 11px;
+            color: #8a9a8a;
+            text-decoration: none;
+            padding: 4px 8px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .nav-bottom .nav-item.active {
+            color: #1B5E20;
+            font-weight: 600;
+        }
+        .nav-bottom .nav-item .nav-icon {
+            font-size: 22px;
+            display: block;
+        }
+        .btn-pdf {
+            background: #1B5E20;
+            color: white;
+            padding: 10px 18px;
+            border-radius: 30px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        .btn-pdf:hover { background: #2e7d32; }
     </style>
 </head>
 <body>
@@ -108,12 +148,11 @@
         <!-- TAB 1: SÍNTOMAS -->
         <div id="tabSintomas" class="tab-content active">
             <h3 style="margin-bottom:12px;">📋 Test de Síntomas</h3>
-            <div id="sintomasContainer">
-                <!-- Las preguntas se generan con JS -->
-            </div>
+            <div id="sintomasContainer"></div>
             <button class="btn-primary" id="calcularSintomas">Calcular mi riesgo</button>
             <div id="resultadoSintomas" class="resultado-box" style="display:none;"></div>
-            <button class="btn-whatsapp" id="whatsappSintomas" style="display:none;">📱 Enviar resultado por WhatsApp</button>
+            <a id="whatsappSintomas" href="#" target="_blank" class="btn-whatsapp" style="display:none; text-decoration:none; text-align:center;">📱 Enviar resultado por WhatsApp</a>
+            <button class="btn-pdf" id="pdfSintomas" style="display:none;">📄 Descargar PDF</button>
         </div>
 
         <!-- TAB 2: ENTORNO -->
@@ -230,10 +269,16 @@
         // ===== CALCULAR SÍNTOMAS =====
         document.getElementById('calcularSintomas').addEventListener('click', function() {
             let total = 0;
+            let todasRespondidas = true;
             sintomasData.forEach(p => {
                 const selected = document.querySelector(`input[name="${p.id}"]:checked`);
                 if (selected) total += parseInt(selected.value);
+                else todasRespondidas = false;
             });
+            if (!todasRespondidas) {
+                alert('Por favor, responde todas las preguntas.');
+                return;
+            }
             const resultado = document.getElementById('resultadoSintomas');
             resultado.style.display = 'block';
             let label, mensaje;
@@ -247,33 +292,49 @@
                 <div style="font-size:14px;color:#3a5a3a;">${mensaje}</div>
             `;
             document.getElementById('whatsappSintomas').style.display = 'inline-flex';
-            // Guardar en localStorage
+            document.getElementById('pdfSintomas').style.display = 'inline-block';
+
             const user = obtenerDatosUsuario();
             if (user) {
-                // Aquí se guarda automáticamente al usar la función global
                 guardarTestSintomas({
                     puntaje: total,
                     clasificacion: label,
-                    glucosa: 92, // placeholder
+                    glucosa: 92,
                     homaIr: (total / 12 * 2.5).toFixed(1),
-                    perimetroAbdominal: 84 // placeholder
+                    perimetroAbdominal: 84
                 });
             }
-        });
 
-        // ===== WHATSAPP RESULTADOS =====
-        document.getElementById('whatsappSintomas').addEventListener('click', function() {
-            const resultado = document.getElementById('resultadoSintomas').innerText;
-            enviarResultados(resultado);
+            // Evento para WhatsApp
+            document.getElementById('whatsappSintomas').onclick = function(e) {
+                e.preventDefault();
+                const texto = `Resultados del Test de Síntomas:\nPuntaje: ${total}/12\nClasificación: ${label}\n${mensaje}`;
+                const url = `https://wa.me/584129504867?text=${encodeURIComponent('Hola Dr. Neptalí, mis resultados de la app "El Código de la Insulina":\n\n' + texto)}`;
+                window.open(url, '_blank');
+            };
+
+            // Evento para PDF
+            document.getElementById('pdfSintomas').onclick = function() {
+                const user = obtenerDatosUsuario();
+                const nombre = user ? user.nombre : 'Usuario';
+                const texto = `Resultados del Test de Síntomas\n\nPuntaje: ${total}/12\nClasificación: ${label}\n${mensaje}`;
+                generarPDF(texto, 'Síntomas', nombre);
+            };
         });
 
         // ===== CALCULAR ENTORNO =====
         document.getElementById('calcularEntorno').addEventListener('click', function() {
             let total = 0;
+            let todasRespondidas = true;
             entornoData.forEach(p => {
                 const selected = document.querySelector(`input[name="${p.id}"]:checked`);
                 if (selected) total += parseInt(selected.value);
+                else todasRespondidas = false;
             });
+            if (!todasRespondidas) {
+                alert('Por favor, responde todas las preguntas.');
+                return;
+            }
             const resultado = document.getElementById('resultadoEntorno');
             resultado.style.display = 'block';
             let nivel = total <= 12 ? '🟢 Verde (Entorno Protector)' :
@@ -298,6 +359,10 @@
             const silla = parseInt(document.getElementById('f1').value) || 0;
             const plancha = parseInt(document.getElementById('f2').value) || 0;
             const carga = parseInt(document.getElementById('f3').value) || 0;
+            if (silla === 0 && plancha === 0 && carga === 0) {
+                alert('Por favor, ingresa al menos un valor.');
+                return;
+            }
             const total = silla + plancha + carga;
             const resultado = document.getElementById('resultadoFuerza');
             resultado.style.display = 'block';
