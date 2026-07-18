@@ -182,7 +182,7 @@
             <button class="tab" data-tab="tabFuerza">Fuerza</button>
         </div>
 
-        <!-- ==================== TAB 1: SÍNTOMAS ==================== -->
+        <!-- TAB 1: SÍNTOMAS -->
         <div id="tabSintomas" class="tab-content active">
             <h3 style="margin-bottom:12px;">📋 Test de Síntomas (Capítulo 1)</h3>
             <p style="font-size:13px;color:#5a6a5a;margin-bottom:12px;">Evalúa los signos clínicos de resistencia a la insulina.</p>
@@ -193,7 +193,7 @@
             <button class="btn-pdf" id="pdfSintomas" style="display:none;">📄 Descargar PDF</button>
         </div>
 
-        <!-- ==================== TAB 2: ENTORNO (MEJORADO) ==================== -->
+        <!-- TAB 2: ENTORNO -->
         <div id="tabEntorno" class="tab-content">
             <h3 style="margin-bottom:12px;">🌿 Test de Entorno (Capítulo 2)</h3>
             <p style="font-size:13px;color:#5a6a5a;margin-bottom:12px;">Evalúa factores externos que impactan tu sensibilidad a la insulina.</p>
@@ -202,7 +202,7 @@
             <div id="resultadoEntorno" class="resultado-box" style="display:none;"></div>
         </div>
 
-        <!-- ==================== TAB 3: FUERZA ==================== -->
+        <!-- TAB 3: FUERZA -->
         <div id="tabFuerza" class="tab-content">
             <h3 style="margin-bottom:12px;">💪 Test de Fuerza Muscular (Capítulo 4)</h3>
             <p style="font-size:13px;color:#5a6a5a;margin-bottom:12px;">Mide tu capacidad muscular para consumir glucosa.</p>
@@ -223,9 +223,11 @@
 
     <script src="app.js"></script>
     <script>
-        // ============================================
-        // 1. DATOS DEL TEST DE SÍNTOMAS (6 preguntas)
-        // ============================================
+        // ============================================================
+        // DATOS DE PREGUNTAS
+        // ============================================================
+
+        // 1. TEST DE SÍNTOMAS
         const sintomasData = [
             { id: 's1', label: 'Manchas oscuras en el cuello o axilas (Acantosis nigricans)' },
             { id: 's2', label: 'Pequeños "pellejitos" en la piel (Acrocordones)' },
@@ -235,40 +237,30 @@
             { id: 's6', label: 'Grasa acumulada en el abdomen' }
         ];
 
-        // ============================================
-        // 2. DATOS DEL TEST DE ENTORNO (MEJORADO - 10 preguntas)
-        // Puntuación: 0, 2, 4 por pregunta. Total máx: 40.
-        // Rangos: Verde 0-12, Amarillo 13-28, Rojo 29-40
-        // ============================================
+        // 2. TEST DE ENTORNO (10 preguntas mejoradas)
         const entornoData = [
-            // --- Cronodisrupción (3 preguntas) ---
             { id: 'e1', label: '¿Usas pantallas (celular, TV, computadora) en la hora previa a dormir?', opts: ['Nunca', 'Ocasionalmente', 'Siempre'] },
             { id: 'e2', label: '¿A qué hora realizas tu última comida del día?', opts: ['Antes de las 8pm', 'Entre 8-10pm', 'Después de las 10pm'] },
             { id: 'e3', label: '¿Tu horario de sueño varía mucho entre semana y fines de semana?', opts: ['No, es regular', 'Varía un poco', 'Varía mucho'] },
-            // --- Estrés (3 preguntas) ---
             { id: 'e4', label: '¿Sientes que el tiempo no te alcanza o que siempre llegas tarde?', opts: ['Casi nunca', 'A veces', 'Diariamente'] },
             { id: 'e5', label: '¿Revisas el teléfono apenas abres los ojos por la mañana?', opts: ['No', 'A veces', 'Siempre'] },
             { id: 'e6', label: '¿Te despiertas entre las 2:00 AM y 4:00 AM con la mente acelerada?', opts: ['Nunca', 'Ocasionalmente', 'Frecuentemente'] },
-            // --- Intestinal (2 preguntas) ---
             { id: 'e7', label: '¿Sientes hinchazón abdominal, gases o molestias digestivas frecuentes?', opts: ['Nunca', 'A veces', 'Siempre'] },
             { id: 'e8', label: '¿Has tomado antibióticos, antiácidos (omeprazol) o antiinflamatorios en el último año?', opts: ['No', 'Una vez', 'Múltiples veces'] },
-            // --- Carga Química (2 preguntas) ---
-            { id: 'e9', label: '¿Calientas comida en recipientes de plástico en el microondas o consumes líquidos calientes en envases de plástico?', opts: ['Nunca', 'A veces', 'Con frecuencia'] },
-            { id: 'e10', label: '¿Usas perfumes, desodorantes o productos de limpieza con fragancias sintéticas muy fuertes?', opts: ['No, uso naturales o suaves', 'A veces', 'Sí, a diario'] }
+            { id: 'e9', label: '¿Calientas comida en recipientes de plástico en el microondas?', opts: ['Nunca', 'A veces', 'Con frecuencia'] },
+            { id: 'e10', label: '¿Usas perfumes o productos con fragancias sintéticas muy fuertes?', opts: ['No, uso naturales o suaves', 'A veces', 'Sí, a diario'] }
         ];
 
-        // ============================================
-        // 3. DATOS DEL TEST DE FUERZA (3 mediciones)
-        // ============================================
+        // 3. TEST DE FUERZA
         const fuerzaData = [
             { id: 'f1', label: 'Prueba de la Silla (repeticiones en 60 segundos)' },
             { id: 'f2', label: 'Prueba de Plancha (segundos aguantando)' },
             { id: 'f3', label: 'Capacidad de Carga (segundos sosteniendo 5kg en cada mano)' }
         ];
 
-        // ============================================
-        // RENDERIZADO DE CADA TEST
-        // ============================================
+        // ============================================================
+        // RENDERIZAR CADA TEST
+        // ============================================================
 
         function renderSintomas() {
             const container = document.getElementById('sintomasContainer');
@@ -290,11 +282,11 @@
         function renderEntorno() {
             const container = document.getElementById('entornoContainer');
             let html = '';
-            let grupos = [
-                { titulo: '🕒 Cronodisrupción (Ritmo circadiano)', items: [0, 1, 2] },
-                { titulo: '🧠 Estrés y Cortisol', items: [3, 4, 5] },
-                { titulo: '🦠 Salud Intestinal', items: [6, 7] },
-                { titulo: '🧪 Carga Química (Obesógenos)', items: [8, 9] }
+            const grupos = [
+                { titulo: '🕒 Cronodisrupción', items: [0,1,2] },
+                { titulo: '🧠 Estrés y Cortisol', items: [3,4,5] },
+                { titulo: '🦠 Salud Intestinal', items: [6,7] },
+                { titulo: '🧪 Carga Química', items: [8,9] }
             ];
             grupos.forEach(grupo => {
                 html += `<div class="seccion-subtitulo">${grupo.titulo}</div>`;
@@ -304,14 +296,12 @@
                         <div class="pregunta">
                             <div class="label">${p.label}</div>
                             <div class="opciones">
-                                ${p.opts.map((txt, optIdx) => {
-                                    // Asignamos puntuación: 0, 2, 4
-                                    const val = optIdx * 2;
-                                    return `<label>
-                                        <input type="radio" name="${p.id}" value="${val}" />
+                                ${p.opts.map((txt, optIdx) => `
+                                    <label>
+                                        <input type="radio" name="${p.id}" value="${optIdx * 2}" />
                                         ${txt}
-                                    </label>`;
-                                }).join('')}
+                                    </label>
+                                `).join('')}
                             </div>
                         </div>
                     `;
@@ -334,9 +324,9 @@
         renderEntorno();
         renderFuerza();
 
-        // ============================================
+        // ============================================================
         // CAMBIO DE TABS
-        // ============================================
+        // ============================================================
         document.querySelectorAll('.tab').forEach(tab => {
             tab.addEventListener('click', function() {
                 document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -346,96 +336,80 @@
             });
         });
 
-        // ============================================
-        // LÓGICA: TEST DE SÍNTOMAS
-        // ============================================
+        // ============================================================
+        // CÁLCULO SÍNTOMAS
+        // ============================================================
         document.getElementById('calcularSintomas').addEventListener('click', function() {
             let total = 0;
-            let todasRespondidas = true;
+            let todas = true;
             sintomasData.forEach(p => {
-                const selected = document.querySelector(`input[name="${p.id}"]:checked`);
-                if (selected) total += parseInt(selected.value);
-                else todasRespondidas = false;
+                const sel = document.querySelector(`input[name="${p.id}"]:checked`);
+                if (sel) total += parseInt(sel.value);
+                else todas = false;
             });
-            if (!todasRespondidas) {
-                alert('Por favor, responde todas las preguntas.');
-                return;
-            }
-            const resultado = document.getElementById('resultadoSintomas');
-            resultado.style.display = 'block';
-            let label, mensaje;
-            if (total <= 4) { label = 'Óptimo'; mensaje = 'Tu metabolismo está en equilibrio. Sigue así.'; }
-            else if (total <= 7) { label = 'Alerta'; mensaje = 'Hay señales tempranas. Toma acción ahora.'; }
-            else if (total <= 10) { label = 'Resistencia'; mensaje = 'Resistencia a la insulina detectada. Sigue el plan.'; }
-            else { label = 'Crítico'; mensaje = 'Es importante que consultes a tu médico.'; }
-            resultado.innerHTML = `
-                <div class="puntaje">${total} / 12</div>
-                <div style="font-size:20px;font-weight:600;">${label}</div>
-                <div style="font-size:14px;color:#3a5a3a;">${mensaje}</div>
-            `;
+            if (!todas) return alert('Responde todas las preguntas.');
+            const res = document.getElementById('resultadoSintomas');
+            res.style.display = 'block';
+            let label, msg;
+            if (total <= 4) { label = 'Óptimo'; msg = 'Tu metabolismo está en equilibrio.'; }
+            else if (total <= 7) { label = 'Alerta'; msg = 'Hay señales tempranas. Toma acción.'; }
+            else if (total <= 10) { label = 'Resistencia'; msg = 'Resistencia detectada. Sigue el plan.'; }
+            else { label = 'Crítico'; msg = 'Consulta a tu médico.'; }
+            res.innerHTML = `<div class="puntaje">${total}/12</div><div style="font-size:20px;font-weight:600;">${label}</div><div style="font-size:14px;">${msg}</div>`;
             document.getElementById('whatsappSintomas').style.display = 'inline-flex';
             document.getElementById('pdfSintomas').style.display = 'inline-block';
-
             const user = obtenerDatosUsuario();
-            if (user) {
-                guardarTestSintomas({
-                    puntaje: total,
-                    clasificacion: label,
-                    glucosa: 92, // placeholder
-                    homaIr: (total / 12 * 2.5).toFixed(1),
-                    perimetroAbdominal: 84
-                });
-            }
-
-            document.getElementById('whatsappSintomas').onclick = function(e) {
+            if (user) guardarTestSintomas({ puntaje: total, clasificacion: label, glucosa: 92, homaIr: (total/12*2.5).toFixed(1), perimetroAbdominal: 84 });
+            document.getElementById('whatsappSintomas').onclick = e => {
                 e.preventDefault();
-                const texto = `Resultados del Test de Síntomas:\nPuntaje: ${total}/12\nClasificación: ${label}\n${mensaje}`;
-                const url = `https://wa.me/584129504867?text=${encodeURIComponent('Hola Dr. Neptalí, mis resultados de la app "El Código de la Insulina":\n\n' + texto)}`;
+                const url = `https://wa.me/584129504867?text=${encodeURIComponent('Hola Dr. Neptalí, mis resultados:\n' + res.innerText)}`;
                 window.open(url, '_blank');
             };
-
-            document.getElementById('pdfSintomas').onclick = function() {
-                const user = obtenerDatosUsuario();
-                const nombre = user ? user.nombre : 'Usuario';
-                const texto = `Resultados del Test de Síntomas\n\nPuntaje: ${total}/12\nClasificación: ${label}\n${mensaje}`;
-                generarPDF(texto, 'Síntomas', nombre);
+            document.getElementById('pdfSintomas').onclick = () => {
+                const nombre = obtenerDatosUsuario()?.nombre || 'Usuario';
+                generarPDF(`Resultados Test de Síntomas\n\n${res.innerText}`, 'Síntomas', nombre);
             };
         });
 
-        // ============================================
-        // LÓGICA: TEST DE ENTORNO (MEJORADO)
-        // ============================================
+        // ============================================================
+        // CÁLCULO ENTORNO
+        // ============================================================
         document.getElementById('calcularEntorno').addEventListener('click', function() {
-            let total = 0;
-            let todasRespondidas = true;
+            let total = 0, todas = true;
             entornoData.forEach(p => {
-                const selected = document.querySelector(`input[name="${p.id}"]:checked`);
-                if (selected) total += parseInt(selected.value);
-                else todasRespondidas = false;
+                const sel = document.querySelector(`input[name="${p.id}"]:checked`);
+                if (sel) total += parseInt(sel.value);
+                else todas = false;
             });
-            if (!todasRespondidas) {
-                alert('Por favor, responde todas las preguntas.');
-                return;
-            }
-            const resultado = document.getElementById('resultadoEntorno');
-            resultado.style.display = 'block';
-            let nivel, mensajeExtra = '';
-            if (total <= 12) {
-                nivel = '🟢 Verde (Entorno Protector)';
-                mensajeExtra = 'Tu estilo de vida está alineado con tu biología. ¡Sigue así!';
-            } else if (total <= 28) {
-                nivel = '🟡 Amarillo (Entorno Hostil)';
-                mensajeExtra = 'Tu cuerpo recibe señales mixtas. Ajusta tus horarios y gestiona el estrés.';
-            } else {
-                nivel = '🔴 Rojo (Entorno de Guerra)';
-                mensajeExtra = 'Tu biología está en modo de supervivencia. Prioriza cambios en tu entorno.';
-            }
-            resultado.innerHTML = `
-                <div class="puntaje">${total} / 40</div>
-                <div style="font-size:20px;font-weight:600;">${nivel}</div>
-                <div style="font-size:14px;color:#3a5a3a;margin-top:4px;">${mensajeExtra}</div>
-            `;
-            guardarTestEntorno({
-                puntajeCronodisrupcion: Math.floor(total * 0.25), // ponderación aproximada
-                puntajeEstres: Math.floor(total * 0.25),
-                puntajeIntestinal: Math.floor(total * 0.25),
+            if (!todas) return alert('Responde todas las preguntas.');
+            const res = document.getElementById('resultadoEntorno');
+            res.style.display = 'block';
+            let nivel, extra;
+            if (total <= 12) { nivel = '🟢 Verde'; extra = 'Entorno protector.'; }
+            else if (total <= 28) { nivel = '🟡 Amarillo'; extra = 'Entorno hostil. Ajusta horarios y estrés.'; }
+            else { nivel = '🔴 Rojo'; extra = 'Entorno de guerra. Prioriza cambios.'; }
+            res.innerHTML = `<div class="puntaje">${total}/40</div><div style="font-size:20px;font-weight:600;">${nivel}</div><div style="font-size:14px;">${extra}</div>`;
+            guardarTestEntorno({ scoreAmbiental: total, nivelRiesgo: nivel });
+        });
+
+        // ============================================================
+        // CÁLCULO FUERZA
+        // ============================================================
+        document.getElementById('calcularFuerza').addEventListener('click', function() {
+            const silla = parseInt(document.getElementById('f1').value) || 0;
+            const plancha = parseInt(document.getElementById('f2').value) || 0;
+            const carga = parseInt(document.getElementById('f3').value) || 0;
+            if (!silla && !plancha && !carga) return alert('Ingresa al menos un valor.');
+            const total = silla + plancha + carga;
+            const res = document.getElementById('resultadoFuerza');
+            res.style.display = 'block';
+            let nivel, msg;
+            if (total < 50) { nivel = 'Depósito vacío'; msg = 'Prioriza activación muscular.'; }
+            else if (total < 100) { nivel = 'Recuperación'; msg = 'Aumenta frecuencia de entrenamiento.'; }
+            else { nivel = 'Farmacia activa'; msg = 'Excelente, tus músculos son tu mejor aliado.'; }
+            res.innerHTML = `<div class="puntaje">${total} pts</div><div style="font-size:20px;font-weight:600;">${nivel}</div><div style="font-size:14px;">${msg}</div>`;
+            guardarTestFuerza({ testSillaRepeticiones: silla, testPlanchaSegundos: plancha, testCargaSegundos: carga, puntajeTotal: total, nivelMuscular: nivel });
+        });
+    </script>
+</body>
+</html>
