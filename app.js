@@ -1,7 +1,10 @@
 // ============================================
 // EL CÓDIGO DE LA INSULINA - APP.JS
-// Lógica completa: registro, login, tests, PDF, WhatsApp
+// VERSIÓN COMPLETA CON WHATSAPP + INSTALACIÓN
 // ============================================
+
+// ===== CONFIGURACIÓN =====
+const NUMERO_DR = '584129504867';
 
 // ===== REFERENCIAS DOM =====
 const loginForm = document.getElementById('loginForm');
@@ -71,7 +74,6 @@ registerBtn.addEventListener('click', function (e) {
     const email = regEmail.value.trim();
     const password = regPassword.value.trim();
 
-    // Validaciones
     if (!nombre) return mostrarError(registerError, 'Ingresa tu nombre completo');
     if (!edad || edad < 10 || edad > 120) return mostrarError(registerError, 'Edad inválida (10-120 años)');
     if (!estatura || estatura < 80 || estatura > 250) return mostrarError(registerError, 'Estatura inválida (80-250 cm)');
@@ -79,13 +81,10 @@ registerBtn.addEventListener('click', function (e) {
     if (!password || password.length < 6) return mostrarError(registerError, 'La contraseña debe tener al menos 6 caracteres');
 
     const users = getUsers();
-
-    // Verificar si el correo ya está registrado
     if (users.some(u => u.email === email)) {
         return mostrarError(registerError, 'Este correo ya está registrado. Inicia sesión.');
     }
 
-    // Crear usuario
     const newUser = {
         id: Date.now().toString(),
         nombre,
@@ -95,12 +94,7 @@ registerBtn.addEventListener('click', function (e) {
         email,
         password,
         fechaRegistro: new Date().toISOString(),
-        // Datos de tests (se llenarán después)
-        tests: {
-            sintomas: [],
-            entorno: [],
-            fuerza: []
-        },
+        tests: { sintomas: [], entorno: [], fuerza: [] },
         comidas: [],
         checkins: []
     };
@@ -108,8 +102,6 @@ registerBtn.addEventListener('click', function (e) {
     users.push(newUser);
     saveUsers(users);
     setCurrentUser(newUser);
-
-    // Redirigir al dashboard
     window.location.href = 'dashboard.html';
 });
 
@@ -166,10 +158,9 @@ function mostrarError(elemento, mensaje) {
 }
 
 // ============================================
-// 6. FUNCIONES GLOBALES PARA OTRAS PÁGINAS
+// 6. FUNCIONES PARA GUARDAR DATOS
 // ============================================
 
-// Guardar datos de tests en el usuario actual
 function guardarTestSintomas(resultados) {
     const user = getCurrentUser();
     if (!user) return false;
@@ -245,41 +236,34 @@ function guardarCheckin(checkin) {
     return true;
 }
 
-// Obtener datos del usuario actual
 function obtenerDatosUsuario() {
     return getCurrentUser();
 }
 
-// Cerrar sesión
 function cerrarSesion() {
     clearCurrentUser();
     window.location.href = 'index.html';
 }
 
 // ============================================
-// 7. FUNCIONES PARA GENERAR PDF (usando jspdf)
+// 7. FUNCIONES PARA WHATSAPP (CORREGIDAS)
 // ============================================
-
-function generarPDF(resultados, tipo) {
-    // Esta función se implementará cuando añadamos la librería jspdf
-    // en las páginas de tests
-    console.log('Generando PDF para:', tipo, resultados);
-    alert('Función de PDF en desarrollo. Pronto estará lista.');
-}
-
-// ============================================
-// 8. FUNCIONES PARA WHATSAPP
-// ============================================
-
-const NUMERO_DR = '584129504867';
 
 function enviarWhatsApp(mensaje) {
     const texto = encodeURIComponent(mensaje);
-    window.open(`https://wa.me/${NUMERO_DR}?text=${texto}`, '_blank');
+    const url = `https://wa.me/${NUMERO_DR}?text=${texto}`;
+    try {
+        const win = window.open(url, '_blank');
+        if (!win || win.closed || typeof win.closed === 'undefined') {
+            window.location.href = url;
+        }
+    } catch (e) {
+        window.location.href = url;
+    }
 }
 
 function enviarResultados(resultados) {
-    const mensaje = `Hola Dr. Neptalí, le adjunto mis resultados de la app "El Código de la Insulina":\n\n${resultados}`;
+    const mensaje = `Hola Dr. Neptalí, mis resultados de la app "El Código de la Insulina":\n\n${resultados}`;
     enviarWhatsApp(mensaje);
 }
 
@@ -293,6 +277,128 @@ function solicitarCitaOnline() {
 
 function solicitarVisita() {
     enviarWhatsApp('Hola Dr. Neptalí, quiero solicitar una visita domiciliaria.');
+}
+
+// ============================================
+// 8. INSTALACIÓN DE LA APP (PWA)
+// ============================================
+
+let deferredPrompt;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    const androidBtn = document.getElementById('instalacionAndroid');
+    if (androidBtn) androidBtn.style.display = 'block';
+});
+
+function instalarApp() {
+    if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then((resultado) => {
+            if (resultado.outcome === 'accepted') {
+                console.log('App instalada correctamente');
+                const androidBtn = document.getElementById('instalacionAndroid');
+                if (androidBtn) androidBtn.style.display = 'none';
+            } else {
+                console.log('El usuario rechazó la instalación');
+            }
+            deferredPrompt = null;
+        });
+    } else {
+        alert('La instalación no está disponible en este momento. Intenta desde Chrome.');
+    }
+}
+
+function esDispositivoIOS() {
+    return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+}
+
+function estaInstalada() {
+    return window.matchMedia('(display-mode: standalone)').matches;
+}
+
+window.addEventListener('load', function() {
+    if (estaInstalada()) {
+        const androidDiv = document.getElementById('instalacionAndroid');
+        const iosDiv = document.getElementById('instalacionIOS');
+        if (androidDiv) androidDiv.style.display = 'none';
+        if (iosDiv) iosDiv.style.display = 'none';
+        return;
+    }
+
+    if (esDispositivoIOS()) {
+        const androidDiv = document.getElementById('instalacionAndroid');
+        const iosDiv = document.getElementById('instalacionIOS');
+        if (androidDiv) androidDiv.style.display = 'none';
+        if (iosDiv) iosDiv.style.display = 'block';
+    }
+});
+
+window.instalarApp = instalarApp;
+
+// ============================================
+// 9. FUNCIONES PARA PDF (con jspdf)
+// ============================================
+
+function generarPDF(resultados, tipo, nombreUsuario) {
+    // Asegurarse de que la librería esté cargada
+    if (typeof window.jspdf === 'undefined') {
+        // Cargar dinámicamente si no está disponible
+        const script = document.createElement('script');
+        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+        script.onload = function() {
+            generarPDFInterno(resultados, tipo, nombreUsuario);
+        };
+        document.head.appendChild(script);
+        return;
+    }
+    generarPDFInterno(resultados, tipo, nombreUsuario);
+}
+
+function generarPDFInterno(resultados, tipo, nombreUsuario) {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF('p', 'mm', 'a4');
+    const logo = document.getElementById('logoImg') ? document.getElementById('logoImg').src : '';
+
+    // Título
+    doc.setFontSize(20);
+    doc.setTextColor(27, 94, 32);
+    doc.text('El Código de la Insulina', 105, 20, { align: 'center' });
+
+    // Logo (si está disponible)
+    if (logo) {
+        try {
+            doc.addImage(logo, 'PNG', 80, 28, 50, 50);
+        } catch (e) {
+            // Si falla la imagen, solo texto
+        }
+    }
+
+    doc.setFontSize(14);
+    doc.setTextColor(0, 0, 0);
+    doc.text(`Resultados del Test: ${tipo}`, 105, 95, { align: 'center' });
+    doc.text(`Usuario: ${nombreUsuario || 'No especificado'}`, 20, 110);
+    doc.text(`Fecha: ${new Date().toLocaleDateString()}`, 20, 120);
+
+    // Línea separadora
+    doc.line(20, 130, 190, 130);
+
+    doc.setFontSize(12);
+    const lineas = resultados.split('\n');
+    let y = 145;
+    lineas.forEach(linea => {
+        if (y > 270) { doc.addPage(); y = 20; }
+        doc.text(linea.trim(), 20, y);
+        y += 8;
+    });
+
+    // Pie de página
+    doc.setFontSize(10);
+    doc.setTextColor(100, 100, 100);
+    doc.text('www.doctrez1-cyber.github.io/app_codigo_insulina', 105, 280, { align: 'center' });
+
+    doc.save(`resultados_${tipo}_${new Date().toISOString().slice(0,10)}.pdf`);
 }
 
 // Exportar funciones globales
