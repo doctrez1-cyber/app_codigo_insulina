@@ -1,5 +1,5 @@
 // service-worker.js
-const CACHE_NAME = 'codigo-insulina-v1';
+const CACHE_NAME = 'codigo-insulina-v2';
 const ARCHIVOS = [
     '/',
     '/index.html',
